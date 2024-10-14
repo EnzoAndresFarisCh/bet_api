@@ -1,0 +1,281 @@
+<div>
+    let a = (() => {
+        //https://br.betano.com/?pid=incomeaccess_int&af_sub1=a_29568b_619c_GSN_BRAND_BR_Brand&af_ad_id=9507&utm_medium=9507&utm_source=29568&utm_campaign=619&siteid=29568&gclid=EAIaIQobChMI39S5hfa4iAMVPl9IAB0_gCF2EAAYAyAAEgJ8u_D_BwE
+        const style = document.createElement('style');
+        style.textContent = `
+        #div-loading{
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100dvh;
+            width: 100dvw;
+        }
+          #uploadBtn {
+            position: absolute;
+            top: 10px;
+            right: 247px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 99999;
+          }
+          
+          #uploadBtn:hover {
+            background-color: #45a049;
+          }
+    
+          input[type="file"] {
+            display: none;
+          }
+        `;
+        document.head.appendChild(style);
+        const uploadBtn = document.createElement('button');
+        uploadBtn.id = 'uploadBtn';
+        uploadBtn.textContent = 'Inserir Planilha';
+    
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.id = 'fileInput';
+        fileInput.accept = '.csv';
+    
+        document.body.appendChild(uploadBtn);
+        document.body.appendChild(fileInput);
+    
+        uploadBtn.addEventListener('click', () => {
+          fileInput.click();
+        });
+    
+        // Função para processar o arquivo CSV
+        fileInput.addEventListener('change', (event) => {
+           const file = event.target.files[0];
+                  
+                  if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                      const text = e.target.result;
+                      const lines = text.split('\n');
+                      const usersPl = [];
+                      for (let i = 1; i < lines.length; i++) {
+                        const [user, password] = lines[i].split(",");
+                        if (user) {
+                          usersPl.push({ "user": user.trim(), "password": password.trim() });
+                        }
+                      }
+                      let users = usersPl
+                                
+                                getScriptAll(document.querySelectorAll("iframe"))
+                                getScriptAll(document.querySelectorAll("script"))
+                                
+                                function getScriptAll(selectorIframe){
+                                    selectorIframe.forEach(e => {
+                                       e.remove()
+                                    })
+                                }
+                                
+                                window.stop()
+                                
+                                function logoutUser(){
+                                    return new Promise((response, reject) => {
+                                         fetch(`https://br.betano.com/myaccount/logout?userDetails`, {method: "POST", body: JSON.stringify({
+                                    "did": null,
+                                    "p": 1
+                                })}).then(_ => _.json()).then((res) => {
+                                             response(res)
+                                             return res
+                                })
+                                    })
+                                   
+                                }
+                                
+                                function getUser(user, password){
+                                    return new Promise((response, reject) => {
+                                         fetch(`https://br.betano.com/myaccount/login?user=${user}`, {
+                                  method: 'POST',
+                                  headers: {
+                                    'accept': 'application/json, text/plain, */*',
+                                    'accept-encoding': 'gzip, deflate, br, zstd',
+                                    'accept-language': 'es-US,es-419;q=0.9,es;q=0.8,pt;q=0.7,en;q=0.6',
+                                    'content-type': 'application/json',
+                                    'origin': 'https://br.betano.com',
+                                    'referer': 'https://br.betano.com/myaccount/login',
+                                    'sec-ch-ua': '"Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"',
+                                    'sec-ch-ua-mobile': '?0',
+                                    'sec-ch-ua-platform': '"Linux"',
+                                    'sec-fetch-dest': 'empty',
+                                    'sec-fetch-mode': 'cors',
+                                    'sec-fetch-site': 'same-origin',
+                                    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36'
+                                  },
+                                  body: JSON.stringify({
+                                    "ParentUrl": "https://br.betano.com/",
+                                    "MultifactorAuthenticationCode": null,
+                                    "Username": user,
+                                    "Password": password
+                                })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    setTimeout(() => {
+                                        response(data.CustomerId)
+                                    return data.CustomerId
+                                    }, 500)
+                                })
+                                .catch(error => reject(true));
+                                    })
+                                }
+        
+                                function getCPF(){
+                                    return new Promise((response, reject) => {
+                                        fetch("https://br.betano.com/myaccount/api/ma/customer/basic-info").then(_ => _.json()).then(r => {
+                                            response(r.Result)
+                                            return r.Result
+                                        }).catch(() => {
+                                            reject(false)
+                                        })
+                                    })
+                                }
+                                
+                                function getBonus(){
+                                    return new Promise((response, reject) => {
+                                        fetch("https://br.betano.com/myaccount/api/dep/deposit/type/236/bonus").then(_ => _.json())
+                                        .then(r => {
+                                            response(r)
+                                            return r
+                                        }).catch(() => {
+                                            reject(false)
+                                        })
+        
+                                    })
+                                }
+        
+                                function getSaldo(id){
+                                    return new Promise((response, reject) => {
+                                        fetch(`https://br.betano.com/api/balance?_=${id}`).then(_ => _.json())
+                                        .then(r => {
+                                            response(r)
+                                            return r
+                                        }).catch(() => {
+                                            reject(false)
+                                        })
+        
+                                    })
+                                }
+                                
+                                function convertToCSV(objArray) {
+                                  const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+                                  let str = '';
+                                
+                                  let header = Object.keys(array[0]).join(',') + '\r\n';
+                                  str += header;
+                                
+                                  for (let i = 0; i < array.length; i++) {
+                                    let line = '';
+                                    for (let index in array[i]) {
+                                      if (line !== '') line += ',';
+                                      line += array[i][index];
+                                    }
+                                    str += line + '\r\n';
+                                  }
+                                
+                                  return str;
+                                }
+                                
+                                function getFormattedDateTime() {
+                                  const now = new Date();
+                                  const day = now.getDate().toString().padStart(2, '0');
+                                  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                                  const year = now.getFullYear();
+                                  const hours = now.getHours().toString().padStart(2, '0');
+                                  const minutes = now.getMinutes().toString().padStart(2, '0'); 
+                                
+                                  return `${day}-${month}-${year}_${hours}-${minutes}`;
+                                }
+                                
+                                function downloadCSV(csv, filename) {
+                                  const csvFile = new Blob([csv], { type: 'text/csv' });
+                                  const downloadLink = document.createElement('a');
+                                
+                                  downloadLink.download = filename;
+                                  downloadLink.href = window.URL.createObjectURL(csvFile);
+                                  downloadLink.style.display = 'none';
+                                
+                                  document.body.appendChild(downloadLink);
+                                  downloadLink.click();
+                                  document.body.removeChild(downloadLink);
+                                }
+                                
+                                async function main(index){
+                                    const {user, password} = users[index]
+                                    const userID = await getUser(user, password).then(async (r) => {
+                                    const bonus = await getBonus()
+                                    const cpf =  await getCPF()
+                                    const saldo = await getSaldo(r)
+                                    await logoutUser()
+                                    users[index].bonus = !!Object.keys(bonus).length
+                                    users[index].data_vencimento = !!Object.keys(bonus).length ? new Date(bonus.Result?.CampaignTriggers[0].End).toLocaleDateString() : "Sem Bonus"
+                                    users[index].cpf = cpf.TaxIdentificationNumber
+                                    users[index].freeBet = !!Object.keys(bonus).length && !!bonus.Result?.CampaignTriggers[0].Triggers[0].Config.DepositConfig.Amount ? bonus.Result?.CampaignTriggers[0].Triggers[0].Config.DepositConfig.Amount : "Sem Freebet"
+                                    users[index].saldo_conta = saldo.data.balances[0].cashBalanceFormatted
+                                    if(!!users[++index]){
+                                getScriptAll(document.querySelectorAll("iframe"))
+                                getScriptAll(document.querySelectorAll("script"))
+                                
+                                function getScriptAll(selectorIframe){
+                                    selectorIframe.forEach(e => {
+                                       e.remove()
+                                    })
+                                }
+                                        setTimeout(() => {
+                                           main(index)  
+                                        }, 4500)
+                                    }else{
+                                        alert("finalizado")
+                                        const currentDateTime = getFormattedDateTime();
+                                        const filename = `usuarios_betano_bonus_${currentDateTime}.csv`;
+                                        
+                                        const csv = convertToCSV(users);
+                                        downloadCSV(csv, filename);
+                                    }
+                                    } ).catch((er) => {
+                                        users[index].bonus = "erro"
+                                        users[index].data_vencimento = "erro"
+                                        users[index].cpf = "erro"
+                                        users[index].freeBet = "erro"
+                                        users[index].saldo_conta = "erro"
+                                        if(!!users[++index]){
+                                            getScriptAll(document.querySelectorAll("iframe"))
+                                            getScriptAll(document.querySelectorAll("script"))
+                                            
+                                            function getScriptAll(selectorIframe){
+                                                selectorIframe.forEach(e => {
+                                                   e.remove()
+                                                })
+                                            }
+                                                    setTimeout(() => {
+                                                       main(index)  
+                                                    }, 4500)
+                                                }else{
+                                                    alert("finalizado")
+                                                    const currentDateTime = getFormattedDateTime();
+                                                    const filename = `usuarios_betano_bonus_${currentDateTime}.csv`;
+                                                    
+                                                    const csv = convertToCSV(users);
+                                                    downloadCSV(csv, filename);
+                                                }
+                                    })
+                                }
+                                
+                                main(0)
+            
+                    };
+                    reader.readAsText(file);
+                  }
+        });
+    
+    })()
+        
+</div>
